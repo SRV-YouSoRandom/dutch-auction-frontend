@@ -1,5 +1,5 @@
 // Your deployed contract address
-export const AUCTION_CONTRACT_ADDRESS = "0x7e7feAC35f55dFD6DC28c0E359e01119dDD1beB7";
+export const AUCTION_CONTRACT_ADDRESS = "0x5D70abeEc006022617e55D19A227de1c6c99Fa6e";
 
 // Define your custom chain here (updated for wagmi v2)
 export const customChain = {

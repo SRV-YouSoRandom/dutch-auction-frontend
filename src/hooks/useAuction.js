@@ -1,4 +1,4 @@
-import { useContractRead, useContractWrite, useAccount } from 'wagmi';
+import { useReadContract, useWriteContract, useAccount } from 'wagmi';
 import { formatEther, parseEther } from 'viem';
 import { AUCTION_CONTRACT_ADDRESS } from '../utils/constants';
 import DutchAuctionABI from '../abi/DutchAuction.json';
@@ -7,67 +7,80 @@ export function useAuction() {
   const { address } = useAccount();
 
   // Read auction info
-  const { data: auctionInfo, refetch: refetchAuctionInfo } = useContractRead({
+  const { data: auctionInfo, refetch: refetchAuctionInfo } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'getAuctionInfo',
-    watch: true,
+    query: {
+      refetchInterval: 1000, // Refetch every second for real-time updates
+    },
   });
 
   // Read current price
-  const { data: currentPrice } = useContractRead({
+  const { data: currentPrice } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'getCurrentPrice',
-    watch: true,
+    query: {
+      refetchInterval: 1000,
+    },
+  });
+
+  // Read paused status
+  const { data: isPaused } = useReadContract({
+    address: AUCTION_CONTRACT_ADDRESS,
+    abi: DutchAuctionABI,
+    functionName: 'paused',
+    query: {
+      refetchInterval: 1000,
+    },
   });
 
   // Read user purchase info
-  const { data: purchaseInfo } = useContractRead({
+  const { data: purchaseInfo } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'getPurchaseInfo',
     args: [address],
-    enabled: !!address,
-    watch: true,
+    query: {
+      enabled: !!address,
+      refetchInterval: 1000,
+    },
   });
 
   // Read auction parameters
-  const { data: maxTokensPerAddress } = useContractRead({
+  const { data: maxTokensPerAddress } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'maxTokensPerAddress',
   });
 
-  const { data: minBidIncrement } = useContractRead({
+  const { data: minBidIncrement } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'minBidIncrement',
   });
 
-  const { data: reservePrice } = useContractRead({
+  const { data: reservePrice } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'reservePrice',
   });
 
-  const { data: startingPrice } = useContractRead({
+  const { data: startingPrice } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'startingPrice',
   });
 
-  const { data: totalTokenAmount } = useContractRead({
+  const { data: totalTokenAmount } = useReadContract({
     address: AUCTION_CONTRACT_ADDRESS,
     abi: DutchAuctionABI,
     functionName: 'totalTokenAmount',
   });
 
   // Buy tokens function
-  const { write: buyTokens, isLoading: isBuying } = useContractWrite({
-    address: AUCTION_CONTRACT_ADDRESS,
-    abi: DutchAuctionABI,
-    functionName: 'buyTokens',
+  const { writeContract: buyTokens, isPending: isBuying } = useWriteContract({
     onSuccess: () => {
       refetchAuctionInfo();
     },
@@ -75,6 +88,9 @@ export function useAuction() {
 
   const handleBuyTokens = (tokenAmount, ethValue) => {
     buyTokens({
+      address: AUCTION_CONTRACT_ADDRESS,
+      abi: DutchAuctionABI,
+      functionName: 'buyTokens',
       args: [tokenAmount],
       value: parseEther(ethValue.toString()),
     });
@@ -96,6 +112,7 @@ export function useAuction() {
     reservePrice: reservePrice ? formatEther(reservePrice) : '0',
     startingPrice: startingPrice ? formatEther(startingPrice) : '0',
     totalTokenAmount: totalTokenAmount ? totalTokenAmount.toString() : '0',
+    isPaused: isPaused || false, // Added isPaused with default fallback
     buyTokens: handleBuyTokens,
     isBuying,
     calculateCost,
