@@ -1,9 +1,9 @@
 // Your deployed contract address
 export const AUCTION_CONTRACT_ADDRESS = "0x7e7feAC35f55dFD6DC28c0E359e01119dDD1beB7";
 
-// Define your custom chain here
+// Define your custom chain here (updated for wagmi v2)
 export const customChain = {
-  id: 101003, // Replace with your chain ID
+  id: 101003,
   name: 'June Socotra',
   network: 'custom',
   nativeCurrency: {
@@ -12,10 +12,15 @@ export const customChain = {
     symbol: 'JUNE',
   },
   rpcUrls: {
-    public: { http: ['rpc.socotra-testnet.network/ext/bc/JUNE/rpc'] }, // Replace with your RPC URL
-    default: { http: ['rpc.socotra-testnet.network/ext/bc/JUNE/rpc'] }, // Replace with your RPC URL
+    default: { 
+      http: ['https://rpc.socotra-testnet.network/ext/bc/JUNE/rpc'] // Added https://
+    },
   },
   blockExplorers: {
-    default: { name: 'MCNScan', url: 'https://socotra.juneoscan.io/' }, // Replace with your explorer
+    default: { 
+      name: 'MCNScan', 
+      url: 'https://socotra.juneoscan.io/' 
+    },
   },
+  testnet: true, // Add this since it's a testnet
 };
