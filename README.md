@@ -5,6 +5,8 @@ A minimal, fast-deploying Dutch Auction DApp built with React and deployed contr
 > 🚀 Live Demo: [https://dutchauction.souravde.xyz](https://dutchauction.souravde.xyz)
 > 📬 Contact: [https://souravde.xyz](https://souravde.xyz)
 
+![dutchauction souravde xyz_](https://github.com/user-attachments/assets/8dd6f837-7cc3-427d-9d17-141f5db20cd8)
+
 ---
 
 ## ⚙️ Quick Setup Instructions
